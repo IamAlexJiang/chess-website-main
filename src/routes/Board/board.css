@@ -1,0 +1,64 @@
+.chessboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: white; /* Ensure container has a background color */
+}
+
+.chess-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
+}
+
+.chess-btn {
+  font-size: 1.1rem;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  border: none;
+  margin-right: 1em;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+}
+.chess-modal p {
+  margin: 0;
+}
+
+.chess-modal {
+  font-weight: 600;
+  font-size: 1.2rem;
+  width: 400px;
+  height: 230px;
+  display: flex;
+  border-radius: 10px;
+  border: 4px solid rgb(181, 136, 99);
+  align-items: center;
+  flex-direction: column;
+  background-color: rgb(240, 217, 181);
+  position: absolute;
+  z-index: 9999;
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1em;
+}
+
+.chess-modal svg {
+  margin: 1em 0;
+}
+
+.chess-modal button {
+  margin: 0;
+  background-color: rgb(181, 136, 99);
+  font-weight: 600;
+}

@@ -1,0 +1,24 @@
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Open Sans, sans-serif;
+  background-color: #9cc1f2; /* Set background color to blue */
+}
+
+.App {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column; /* Ensure it stacks vertically */
+}
+
+/* App.css */
+.content {
+  margin-left: 200px; /* This should match the width of your sidebar */
+  padding: 20px;
+}
+
+
+/* Rest of your existing CSS */
+
+

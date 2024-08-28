@@ -1,0 +1,15 @@
+.home-page-title {
+    margin: 20px 0; /* Adjust margin as needed */
+    position: absolute; /* Position the title */
+    top: 50px; /* Adjust as needed */
+    right: 15%; /* Move title to the center horizontally */
+    transform: translateX(-50%); /* Center title horizontally */
+  }
+
+  .home-page-subtitle {
+    margin: 20px 0; /* Adjust margin as needed */
+    position: absolute; /* Position the title */
+    top: 0; /* Align title to the top */
+    right: 20%; /* Move title to the center horizontally */
+    transform: translateX(-50%); /* Center title horizontally */
+  }
