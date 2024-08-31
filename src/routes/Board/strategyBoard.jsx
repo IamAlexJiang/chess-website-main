@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./board.css";
+import "./slider.css";
 import { useLocation } from "react-router-dom";
 import dummyData from "./dummyData";
 
@@ -35,15 +35,14 @@ const resetSlide = () => {
     setCurrentIndex(0);
 }
 
-
-
-
 return (
     location.state ? (
         <div className="slider">
             {steps.length > 0 ? (
                 <>
+                    <div className="slider-img">
                     <img src={steps[currentIndex]} alt={`Slide ${currentIndex + 1}`} />
+                    </div>
                     <div>
                         <button onClick={prevSlide}>Previous</button>
                         <button onClick={nextSlide}>Next</button>
@@ -57,7 +56,7 @@ return (
     ) : (
         <div>Please go to gallary to select a strategy</div>
     )
-    
+
 );
 
 };

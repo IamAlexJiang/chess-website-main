@@ -62,3 +62,17 @@
   background-color: rgb(181, 136, 99);
   font-weight: 600;
 }
+
+/* General slider container styles */
+.slider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 800px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: transparent; /* Remove white background */
+}
+

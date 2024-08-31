@@ -198,9 +198,9 @@ export const MAINLINES = [
                 id: 17 ,
                 name: "Sicilian Defense",
                 description: 
-                    "Sicillian Defense starts with 1.e4 c5.",
+                    "Sicilian Defense starts with 1.e4 c5.",
                 category: "King's Pawn",
-                cover: "Sicillian Defense.jpg",
+                cover: "Sicilian Defense.jpg",
                 Rating:{
                     Usage: 9,
                     Difficulty: 8,
