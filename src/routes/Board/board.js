@@ -260,7 +260,7 @@ const ChessGame = () => {
     init();
   },[])
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", display: 'flex' }}>
       {isCheckmate ? (
         <>
           <div className="overlay"></div>
@@ -292,35 +292,35 @@ const ChessGame = () => {
       ) : (
         ""
       )}
-
-      <Chessboard
-        boardWidth={700}
-        id="ClickToMove"
-        animationDuration={200}
-        arePiecesDraggable={false}
-        position={game.fen()}
-        // onPieceDrop={onDrop}
-        onSquareClick={onSquareClick}
-        onSquareRightClick={onSquareRightClick}
-        onPromotionPieceSelect={onPromotionPieceSelect}
-        customBoardStyle={{
-          borderRadius: "4px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-          margin: "0 auto",
-        }}
-        customSquareStyles={{
-          ...moveSquares,
-          ...optionSquares,
-          ...rightClickedSquares,
-        }}
-        promotionToSquare={moveTo}
-        showPromotionDialog={showPromotionDialog}
-        onMouseOverSquare={() => {
-          setIsCheckmate(game.isCheckmate());
-          setWinner(game.turn());
-        }}
-      />
-      <div className="chess-btn-container">
+      <div style={{ flex: '1' }}>
+        <Chessboard
+          boardWidth={700}
+          id="ClickToMove"
+          animationDuration={200}
+          arePiecesDraggable={false}
+          position={game.fen()}
+          // onPieceDrop={onDrop}
+          onSquareClick={onSquareClick}
+          onSquareRightClick={onSquareRightClick}
+          onPromotionPieceSelect={onPromotionPieceSelect}
+          customBoardStyle={{
+            borderRadius: "4px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+            margin: "0 auto",
+          }}
+          customSquareStyles={{
+            ...moveSquares,
+            ...optionSquares,
+            ...rightClickedSquares,
+          }}
+          promotionToSquare={moveTo}
+          showPromotionDialog={showPromotionDialog}
+          onMouseOverSquare={() => {
+            setIsCheckmate(game.isCheckmate());
+            setWinner(game.turn());
+          }}
+        />
+        <div className="chess-btn-container">
         {isRecord &&
           <button
             className="chess-btn"
@@ -348,6 +348,7 @@ const ChessGame = () => {
             Undo
           </button>
         }
+        </div>
       </div>
       <div className="record-list">
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px'}}>
