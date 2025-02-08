@@ -6,25 +6,57 @@
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for zoom effect */
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.018);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+
+  .footer {
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    color: #000;
+
+    .name {
+      display: block;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .description {
+      display: block;
+      margin: 10px 0;
+    }
+  }
+
+  .ratings {
+    margin-top: 10px;
+
+    .rating-bubble {
+      display: inline-block;
+      background-color: #ccc;
+      color: #000;
+      border-radius: 15px;
+      padding: 5px 10px;
+      margin: 5px;
+      font-size: 14px;
+    }
+  }
 }
 
-.endgame-card-container:hover {
-  transform: scale(1.018); /* Zoom in */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
-}
 
-.endgame-card-container img {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-.endgame-card-container .name {
-  margin: 10px 0 5px;
-}
-
-.endgame-card-container .footer {
-  margin: 10px 0;
+.endgame-card-container {
+  .name {
+    font-weight: bold;
+    font-size: 1.2em; /* Adjust the font size as needed */
+  }
 }

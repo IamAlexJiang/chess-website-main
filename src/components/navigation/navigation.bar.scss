@@ -1,6 +1,6 @@
 .sidebar {
   width: 220px;
-  background-color: #333;
+  background-color: #a0d4f7;
   padding-top: 20px;
   height: 100vh;
   position: fixed;
@@ -19,6 +19,9 @@
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 20px;
+  border-radius: 25%;
+  width: 150px;
+  margin-left: 40px;
 }
 
 .PawnLogo svg {
@@ -48,4 +51,15 @@
 .nav-link:hover,
 .nav-link:active {
   background-color: #575757;
+}
+
+.footer {
+  display: block;
+  padding: 0.3rem;
+  font-size: 1rem;
+  color: white;
+  background-color: #00224E;
+  margin-left: -15px;
+  margin-top: 275px;
+  border-radius: 4px;
 }

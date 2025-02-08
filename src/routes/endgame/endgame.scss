@@ -7,23 +7,99 @@
   margin-bottom: 20px;
 }
 
-.endgames-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Adjust to fit 4 items per row */
+.endgame-title {
+  margin: 20px 0;
+  position: relative; /* Change to relative positioning */
+  top: 0;
+  right: 50%;
+  transform: translateX(50%);
+  text-align: center; /* Center the title */
+  color: #ffffff;
+}
+
+.category-title {
+  background-color: #ffffff; /* White background */
+  color: #000;
+  padding: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin-bottom: 20px;
+  margin-top: 20px; /* Add margin-top for spacing */
+  width: fit-content; /* Fit the content */
+}
+
+.category-section {
+  margin-top: 40px; /* Move sections down a bit */
+  margin-left: 20px; /* Adjust this value to move sections to the right */
+}
+
+.sort-block-container {
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  margin-top: 20px;
+}
+
+
+.endgame-card-container {
+  width: calc(25% - 60px); /* Adjust as needed */
+  background-color: #f9f9f9;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.endgame-card-container:hover {
+  transform: scale(1.018);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.endgame-card-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.endgame-card-container .name {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.endgame-card-container .footer .description {
+  margin: 10px 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.endgame-card-container .ratings {
+  margin-top: 10px;
+}
+
+.endgame-card-container .rating-bubble {
+  display: inline-block;
+  background-color: #ccc;
+  color: #000;
+  border-radius: 15px;
+  padding: 5px 10px;
+  margin: 5px;
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {
-  .endgames-container {
-    grid-template-columns: repeat(2, 1fr);
+  .endgame-card-container {
+    width: calc(50% - 20px);
   }
 }
 
 @media (max-width: 480px) {
-  .endgames-container {
-    grid-template-columns: 1fr;
+  .endgame-card-container {
+    width: calc(100% - 20px);
   }
 }

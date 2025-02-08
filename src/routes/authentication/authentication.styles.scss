@@ -1,6 +1,17 @@
+.auth-title {
+    margin: 20px 0;
+    position: relative; /* Change to relative positioning */
+    top: 0;
+    right: 50%;
+    transform: translateX(50%);
+    text-align: center; /* Center the title */
+    color: #ffffff;
+}
+
 .authentication-container {
     display: flex;
     width: 900px;
     justify-content: space-between;
     margin: 30px auto;
+    color: white;
 }

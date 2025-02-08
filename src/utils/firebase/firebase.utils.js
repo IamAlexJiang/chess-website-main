@@ -105,6 +105,18 @@ export const fetchOpenings = async (setData) => {
   });
 };
 
+export const fetchEndgame = async (setData) => {
+  await getDocs(collection(db, "endgames")).then((querySnapshot) => {
+    const newData = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    setData(newData);
+  });
+};
+
+
+//user
 export const createUserDocumentFromAuth = async (
   userAuth,
   additionalInformation = {}

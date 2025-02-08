@@ -1,0 +1,37 @@
+{
+  "title": "Home Page",
+  "subtitle": "Welcome to OpeningMatrix.",
+  "sections": [
+    {
+      "id": 1,
+      "title": "Explore Chess Openings",
+      "content": "Hello chess enthusiasts, welcome to OpeningMatrix! This website is dedicated to providing you with a comprehensive and engaging platform to explore and master chess openings. Whether you’re a beginner looking to understand the fundamentals or an experienced player seeking to enhance your opening skills, OpeningMatrix offers you an extensive collection of chess openings, complete with step--by-step analysis, tutorial videos, and interactive elements. "
+    },
+    {
+      "id": 2,
+      "title": "Our Services",
+      "content": "We offer various chess-related services including interactive guides, detailed strategies, and personalized training plans.",
+      "list": [
+        "Interactive Chess Openings Guide",
+        "Detailed Chess Strategies",
+        "Personalized Training Plans"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Gallery",
+      "content": "View various chess openings through our visual gallery."
+    },
+    {
+       "id": 4,
+       "title": "End Games",
+       "content": "Access to various chess endgames through Endgames page."
+    },
+    {
+       "id": 5,
+       "title": "Board",
+       "content": "Access to the board, play, record and practice with openings of your choice."
+    }
+  ],
+  "footer": "© 2024 OpeningMatrix. All rights reserved."
+}

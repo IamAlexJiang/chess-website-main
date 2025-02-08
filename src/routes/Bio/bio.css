@@ -10,7 +10,9 @@
   padding: 0.5em;
   font-size: 2rem;
   font-weight: 600;
-  border-radius: 10px;
+  width: 30%;
+  margin: 0; 
+  border: 4px solid #3498db;
 }
 
 .image-description-section {
@@ -28,10 +30,13 @@
 }
 
 .description-section {
+  font-size: 1.15rem;
   background-color: #fff;
   color: #000;
   border-radius: 10px;
   padding: 1em;
+  margin-top: 2em;
+  position: relative; /* Add this to position child elements */
 }
 
 .description-section button {
@@ -43,9 +48,19 @@
   font-size: 1.8rem;
   border-radius: 10px;
   cursor: pointer;
-  margin-left: auto;
-  display: block;
+  position: absolute; /* Position it relative to the .description-section */
+  bottom: 0.5em; /* Adjust the bottom space */
+  right: 0.5em; /* Adjust the right space */
 }
+
+.description-section a {
+  text-decoration: none; /* Remove the underline from the link */
+}
+
+.description-section a button {
+  display: inline-block; /* Ensure button is styled correctly */
+}
+
 
 .image-section img {
   max-width: 100%;
@@ -55,6 +70,8 @@
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   margin: 0;
+  margin-top: 50px;
+  margin-left: -60px;
 }
 
 .image-section p {
@@ -68,5 +85,8 @@
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   position: relative;
-  margin-top: -5px;
+  margin-top: -8px;
+  width: 78.18%;
+  margin-left: 25.5px
 }
+

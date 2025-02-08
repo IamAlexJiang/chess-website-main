@@ -1,15 +1,110 @@
-.home-page-title {
-    margin: 20px 0; /* Adjust margin as needed */
-    position: absolute; /* Position the title */
-    top: 50px; /* Adjust as needed */
-    right: 15%; /* Move title to the center horizontally */
-    transform: translateX(-50%); /* Center title horizontally */
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+body {
+  background-color: #f4f7fa; /* Soft off-white background */
+  color: #333; /* Dark text for readability */
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Home Container */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* Header */
+.home-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.home-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #a1d5f4; /* Blue accent */
+  margin-bottom: 10px;
+}
+
+.home-subtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 30px;
+}
+
+/* Main Content */
+.home-main {
+  width: 100%;
+  max-width: 1200px; /* Limit content width */
+  padding: 1.5rem;
+}
+
+.home-content {
+  margin-bottom: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-content h2 {
+  font-size: 2rem;
+  color: #1a73e8; /* Blue accent */
+  margin-bottom: 1rem;
+}
+
+.home-content p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.home-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.home-content ul li {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+/* Footer */
+.home-footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1rem;
+  background-color: #1a73e8; /* Blue footer */
+  color: #fff;
+  border-radius: 8px;
+}
+
+.home-footer p {
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-title {
+    font-size: 2.5rem;
   }
 
-  .home-page-subtitle {
-    margin: 20px 0; /* Adjust margin as needed */
-    position: absolute; /* Position the title */
-    top: 0; /* Align title to the top */
-    right: 20%; /* Move title to the center horizontally */
-    transform: translateX(-50%); /* Center title horizontally */
+  .home-subtitle {
+    font-size: 1.125rem;
   }
+
+  .home-content {
+    padding: 1.5rem;
+  }
+}

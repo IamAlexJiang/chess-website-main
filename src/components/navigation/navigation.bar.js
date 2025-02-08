@@ -19,10 +19,10 @@ const Navigation = () => {
         </Link>
         <div className='nav-links-container'>
           <Link className='nav-link' to='/gallery'>
-            Gallery
+            Openings
           </Link>
           <Link className='nav-link' to='/endgame'>
-            Endgame
+            Endgames
           </Link>
           <Link className='nav-link' to='/board'>
             Board
@@ -36,6 +36,7 @@ const Navigation = () => {
                 Sign In
               </Link>
             )}
+          <h2 className='footer'>© 2024 OpeningMatrix</h2>
         </div>
       </div>
       <Outlet />
@@ -45,39 +46,3 @@ const Navigation = () => {
 
 export default Navigation;
 
-
-
-
-
-// import Fragment from 'react'
-// import { Outlet, Link } from 'react-router-dom';
-
-// import { ReactComponent as PawnLogo } from '../../logo.svg'; 
-
-// import './navigation.bar.scss'
-
-// const Navigation = () => {
-//   return (
-//     <Fragment>
-//       <div className='navigation'>
-//         <link className='logo-container' to='/'>
-//           <PawnLogo className='logo'/>
-//         </link>
-//         <div className='nav-links-container'>
-//           <Link className='nav-link' to='/gallery'>
-//             Gallery
-//           </Link> 
-//           <Link className='nav-link' to='/board'>
-//             Board
-//           </Link> 
-//           <Link className='nav-link' to='/auth'>
-//             Sign In
-//           </Link> 
-//         </div>
-//       </div>
-//       <Outlet />
-//     </Fragment>
-//   );
-// };
-
-// export default Navigation

@@ -3,7 +3,7 @@ import {
   getEndgamesAndDocuments,
   addCollectionAndDocuments,
 } from "../utils/firebase/firebase.utils";
-import { ENDGAMES } from "../routes/endgame/content/data.endgame"; // Correct import
+import { ENDGAMES } from "../routes/endgame/content/endgame-card/data.endgame"; // Correct import
 
 export const EndgameContext = createContext({
   endgameMap: {},
