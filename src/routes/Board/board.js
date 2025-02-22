@@ -1,8 +1,12 @@
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Record from "./record";
+import Manuals from "./manuals";
 import "./board.css";
-
+import { Switch } from '@arco-design/web-react';
+import api from "../../ajax";
+import { Message } from '@arco-design/web-react';
 const ChessGame = () => {
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
@@ -13,7 +17,12 @@ const ChessGame = () => {
   const [optionSquares, setOptionSquares] = useState({});
   const [isCheckmate, setIsCheckmate] = useState(false);
   const [winner, setWinner] = useState("w");
-
+  const [record, setRecord] = useState([]);
+  const [manualId, setManualId] = useState('');
+  const [manualList, setManualList] = useState([]);
+  const [isRecord, setIsRecord] = useState(true);
+  const [undoLock, setUndoLock] = useState(true);
+  const [step, setStep] = useState(0);
   function safeGameMutate(modify) {
     setGame((g) => {
       const update = new Chess(game.fen());
@@ -63,6 +72,13 @@ const ChessGame = () => {
     // });
   }
 
+  function handleGameOver() {
+    Message.info({ content: 'Game Over', duration: 2000 });
+    setTimeout(() => {
+      setStep(0);
+      resetAll();
+    }, 2000);
+  }
   function onSquareClick(square) {
     setRightClickedSquares({});
     // from square
@@ -90,10 +106,8 @@ const ChessGame = () => {
         setMoveFrom(hasMoveOptions ? square : "");
         return;
       }
-
       // valid move
       setMoveTo(square);
-
       // if promotion move
       if (
         (foundMove.color === "w" &&
@@ -114,17 +128,51 @@ const ChessGame = () => {
         to: square,
         promotion: "q",
       });
-
+      setUndoLock(false);
       // if invalid, setMoveFrom and getMoveOptions
       if (move === null) {
         const hasMoveOptions = getMoveOptions(square);
         if (hasMoveOptions) setMoveFrom(square);
         return;
       }
-
       setGame(gameCopy);
-
-      setTimeout(makeRandomMove, 300);
+      if (!isRecord) {
+        const manual = manualId && manualList.find(v => String(v.id) === manualId)?.value
+        if (manual) {
+          if (moveFrom !== manual[step].from || square !== manual[step].to) {
+            setTimeout(() => {
+              setMoveSquares({});
+              setOptionSquares({});
+              setRightClickedSquares({});
+              gameCopy.undo();
+              setGame(gameCopy)
+            }, 300);
+          } else {
+            if (manual[step + 1]) {
+              gameCopy.move({
+                from: manual[step + 1].from,
+                to: manual[step + 1].to,
+                promotion: "q",
+              });
+              setGame(gameCopy);
+              const newStep = step + 2;
+              if (newStep >= manual.length) {
+                handleGameOver();
+              } else {
+                setStep(newStep);
+              }
+            } else {
+              handleGameOver();
+            }
+          }
+        }
+      } else {
+        record.push({
+          from: moveFrom,
+          to: square
+        });
+        setRecord(record);
+      }
       setMoveFrom("");
       setMoveTo(null);
       setOptionSquares({});
@@ -149,6 +197,7 @@ const ChessGame = () => {
     setMoveTo(null);
     setShowPromotionDialog(false);
     setOptionSquares({});
+    
     return true;
   }
 
@@ -171,7 +220,6 @@ const ChessGame = () => {
       promotion: "q", // always promote to a queen for example simplicity
     });
 
-    console.log({ move });
     // illegal move
     if (move === null) return false;
     return true;
@@ -184,8 +232,35 @@ const ChessGame = () => {
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
+  function resetAll() {
+    safeGameMutate((game) => {
+      game.reset();
+    });
+    setMoveSquares({});
+    setOptionSquares({});
+    setRightClickedSquares({});
+    setRecord([]);
+  }
+  const init = async () => {
+    const result = await api.board.getBoards() || [];
+    setManualList(result);
+  }
+  const onDelete = async (id) => {
+    const result = await api.board.deleteBoard(id);
+    if (result) {
+      const newList = manualList.filter(v => String(v.id) !== id);
+      setManualList(newList);
+      setStep(0);
+      resetAll();
+    } else {
+      Message.error({ content: 'Server Error', duration: 2000 });
+    }
+  };
+  useEffect(() => {
+    init();
+  },[])
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", display: 'flex' }}>
       {isCheckmate ? (
         <>
           <div className="overlay"></div>
@@ -217,59 +292,73 @@ const ChessGame = () => {
       ) : (
         ""
       )}
-
-      <Chessboard
-        boardWidth={700}
-        id="ClickToMove"
-        animationDuration={200}
-        arePiecesDraggable={false}
-        position={game.fen()}
-        // onPieceDrop={onDrop}
-        onSquareClick={onSquareClick}
-        onSquareRightClick={onSquareRightClick}
-        onPromotionPieceSelect={onPromotionPieceSelect}
-        customBoardStyle={{
-          borderRadius: "4px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-          margin: "0 auto",
-        }}
-        customSquareStyles={{
-          ...moveSquares,
-          ...optionSquares,
-          ...rightClickedSquares,
-        }}
-        promotionToSquare={moveTo}
-        showPromotionDialog={showPromotionDialog}
-        onMouseOverSquare={() => {
-          setIsCheckmate(game.isCheckmate());
-          setWinner(game.turn());
-        }}
-      />
-      <div className="chess-btn-container">
-        <button
-          className="chess-btn"
-          onClick={() => {
-            safeGameMutate((game) => {
-              game.reset();
-            });
-            setMoveSquares({});
-            setOptionSquares({});
-            setRightClickedSquares({});
+      <div style={{ flex: '1' }}>
+        <Chessboard
+          boardWidth={700}
+          id="ClickToMove"
+          animationDuration={200}
+          arePiecesDraggable={false}
+          position={game.fen()}
+          // onPieceDrop={onDrop}
+          onSquareClick={onSquareClick}
+          onSquareRightClick={onSquareRightClick}
+          onPromotionPieceSelect={onPromotionPieceSelect}
+          customBoardStyle={{
+            borderRadius: "4px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+            margin: "0 auto",
           }}
-        >
-          Reset
-        </button>
-        <button
-          className="chess-btn"
-          onClick={() => {
-            game.undo();
-            setMoveSquares({});
-            setOptionSquares({});
-            setRightClickedSquares({});
+          customSquareStyles={{
+            ...moveSquares,
+            ...optionSquares,
+            ...rightClickedSquares,
           }}
-        >
-          Undo
-        </button>
+          promotionToSquare={moveTo}
+          showPromotionDialog={showPromotionDialog}
+          onMouseOverSquare={() => {
+            setIsCheckmate(game.isCheckmate());
+            setWinner(game.turn());
+          }}
+        />
+        <div className="chess-btn-container">
+        {isRecord &&
+          <button
+            className="chess-btn"
+            onClick={resetAll}
+          >
+            Reset
+          </button>
+        }
+        {isRecord &&
+          <button
+            className="chess-btn"
+            onClick={() => {
+              game.undo();
+              setMoveSquares({});
+              setOptionSquares({});
+              setRightClickedSquares({});
+              if (!undoLock) {
+                setStep(step - 1);
+                record.pop();
+                setRecord(record);
+                setUndoLock(true);
+              }
+            }}
+          >
+            Undo
+          </button>
+        }
+        </div>
+      </div>
+      <div className="record-list">
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px'}}>
+          <Switch checked={isRecord} onChange={(value) => { setIsRecord(value); setStep(0); resetAll(); }} />
+          <div style={{ flex: '1', textAlign: 'center', marginRight: '20px' }}>
+            {isRecord ? <b>Chess Record</b> : <b>Manual List</b>}
+          </div>
+        </div>
+        <div style={{ flex: '1', overflow: 'hidden' }}>
+          {isRecord ? <Record list={record} onSave={(id, list) => { resetAll(); setIsRecord(false); setStep(0); manualList.push(list); setManualList(manualList); setManualId(String(id)) }} /> : <Manuals manualId={manualId} step={step} onSelect={(value) => { setManualId(value); setStep(0); resetAll(); }} manualList={manualList} onDelete={onDelete} />}</div>        
       </div>
     </div>
   );

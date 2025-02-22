@@ -32,4 +32,6 @@ const api = {
     postBoard,
     deleteBoard
 };
+
 export default api;
+
