@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import Record from "./record";
 import Manuals from "./manuals";
 import "./board.css";
-import { Switch } from '@arco-design/web-react';
+import { Switch, Message, Card, Spin } from '@arco-design/web-react';
 import api from "../../ajax";
-import { Message } from '@arco-design/web-react';
 const ChessGame = () => {
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
@@ -23,6 +22,8 @@ const ChessGame = () => {
   const [isRecord, setIsRecord] = useState(true);
   const [undoLock, setUndoLock] = useState(true);
   const [step, setStep] = useState(0);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   function safeGameMutate(modify) {
     setGame((g) => {
       const update = new Chess(game.fen());
@@ -172,6 +173,9 @@ const ChessGame = () => {
           to: square
         });
         setRecord(record);
+        
+        // Get AI analysis after the move is recorded
+        getAIAnalysis();
       }
       setMoveFrom("");
       setMoveTo(null);
@@ -240,6 +244,7 @@ const ChessGame = () => {
     setOptionSquares({});
     setRightClickedSquares({});
     setRecord([]);
+    setAiAnalysis(null);
   }
   const init = async () => {
     const result = await api.board.getBoards() || [];
@@ -259,6 +264,23 @@ const ChessGame = () => {
   useEffect(() => {
     init();
   },[])
+
+  // Function to get AI analysis for the current game state
+  const getAIAnalysis = async () => {
+    if (record.length === 0) return;
+    
+    setIsLoadingAnalysis(true);
+    try {
+      const result = await api.board.getAIAnalysis(record);
+      setAiAnalysis(result);
+    } catch (error) {
+      console.error("Error getting AI analysis:", error);
+      Message.error({ content: 'Failed to get AI analysis', duration: 2000 });
+    } finally {
+      setIsLoadingAnalysis(false);
+    }
+  };
+
   return (
     <div style={{ position: "relative", display: 'flex' }}>
       {isCheckmate ? (
@@ -342,6 +364,8 @@ const ChessGame = () => {
                 record.pop();
                 setRecord(record);
                 setUndoLock(true);
+                // Get AI analysis after undoing a move
+                getAIAnalysis();
               }
             }}
           >
@@ -349,6 +373,32 @@ const ChessGame = () => {
           </button>
         }
         </div>
+        
+        {/* AI Analysis Display */}
+        {isRecord && (
+          <div style={{ marginTop: '20px' }}>
+            <Card title="AI Analysis" bordered={false}>
+              {isLoadingAnalysis ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+                  <Spin />
+                </div>
+              ) : aiAnalysis ? (
+                <div>
+                  <div style={{ marginBottom: '15px' }}>
+                    <h4>Commentary:</h4>
+                    <p>{aiAnalysis.commentary}</p>
+                  </div>
+                  <div>
+                    <h4>Predicted Opponent Move:</h4>
+                    <p>{aiAnalysis.predictedMove}</p>
+                  </div>
+                </div>
+              ) : (
+                <p>Make a move to get AI analysis</p>
+              )}
+            </Card>
+          </div>
+        )}
       </div>
       <div className="record-list">
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px'}}>

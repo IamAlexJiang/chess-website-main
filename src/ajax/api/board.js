@@ -27,10 +27,22 @@ const deleteBoard = (id) => {
     return request.post(`/chess/delete?id=${id}`);
 };
 
+/**
+ * 获取AI对棋局的评论和预测
+ * @param {Array} moves - 棋局移动记录
+ * @returns {Promise<Object>}
+ */
+const getAIAnalysis = (moves) => {
+    return request.post('/chess/analyze', {
+        moves
+    });
+};
+
 const api = {
     getBoards,
     postBoard,
-    deleteBoard
+    deleteBoard,
+    getAIAnalysis
 };
 
 export default api;
