@@ -36,7 +36,6 @@ const Navigation = () => {
                 Sign In
               </Link>
             )}
-          <h2 className='footer'>© 2024 OpeningMatrix</h2>
         </div>
       </div>
       <Outlet />

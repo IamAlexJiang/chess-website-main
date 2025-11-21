@@ -29,7 +29,12 @@ const SignUpForm = () => {
         event.preventDefault();
 
         if(password !== confirmPassword) {
-            alert("password do not match");
+            alert("Passwords do not match");
+            return;
+        }
+
+        if(password.length < 6) {
+            alert("Password must be at least 6 characters long");
             return;
         }
 
@@ -44,8 +49,11 @@ const SignUpForm = () => {
         } catch(error) {
             if(error.code === 'auth/email-already-in-use') {
                 alert('Cannot create user, email already in use');
+            } else if(error.code === 'auth/weak-password') {
+                alert('Password must be at least 6 characters long');
             } else {
                 console.log('user creation encountered an error', error);
+                alert('An error occurred during sign up. Please try again.');
             } 
         }
     };
@@ -82,6 +90,7 @@ const SignUpForm = () => {
                     label="Password"
                     type='password' 
                     required 
+                    minLength={6}
                     onChange={handleChange} 
                     name='password' 
                     value={password} />
@@ -90,6 +99,7 @@ const SignUpForm = () => {
                     label="Confirm Password"
                     type='password' 
                     required 
+                    minLength={6}
                     onChange={handleChange} 
                     name='confirmPassword' 
                     value={confirmPassword} />

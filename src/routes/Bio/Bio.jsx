@@ -30,8 +30,6 @@ const Bio = () => {
 
   const { description, cover, steps } = findedMainline;
 
-  console.log(findedMainline)
-
   return (
     <div className="card-details-container">
       <p className="heading">{name}</p>

@@ -1,0 +1,225 @@
+.chess-analysis {
+  margin: 20px 0;
+
+  .analysis-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e5e9;
+
+    .arco-card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      padding: 16px 20px;
+
+      .arco-card-header-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+
+    .arco-card-body {
+      padding: 0;
+    }
+  }
+
+  .analysis-tabs {
+    .arco-tabs-nav {
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+      margin: 0;
+      padding: 0 20px;
+
+      .arco-tabs-nav-tab {
+        padding: 12px 20px;
+        font-weight: 500;
+        color: #6c757d;
+        border: none;
+        background: transparent;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: #495057;
+          background: rgba(0, 123, 255, 0.1);
+        }
+
+        &.arco-tabs-nav-tab-active {
+          color: #007bff;
+          background: white;
+          border-bottom: 3px solid #007bff;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .arco-tabs-content {
+      padding: 20px;
+      min-height: 300px;
+    }
+  }
+
+  .ai-analysis-content {
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: #6c757d;
+
+      p {
+        margin-top: 16px;
+        font-size: 1.1rem;
+      }
+    }
+
+    .analysis-results {
+      .analysis-section {
+        margin-bottom: 24px;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+
+        h4 {
+          margin: 0 0 12px 0;
+          color: #495057;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        .commentary {
+          color: #6c757d;
+          line-height: 1.6;
+          margin: 0;
+          font-style: italic;
+        }
+
+        .predicted-move {
+          color: #495057;
+          font-weight: 500;
+          margin: 0;
+          font-family: 'Courier New', monospace;
+          background: white;
+          padding: 8px 12px;
+          border-radius: 4px;
+          border: 1px solid #dee2e6;
+        }
+      }
+    }
+
+    .no-analysis {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6c757d;
+      font-style: italic;
+    }
+  }
+
+  .stockfish-analysis-content {
+    // Stockfish analyzer styles are in its own component
+    // This container just provides spacing
+    padding: 0;
+  }
+
+  .comparison-content {
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comparison-section {
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+
+      h4 {
+        margin: 0 0 16px 0;
+        color: #495057;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 8px;
+      }
+
+      .comparison-result {
+        p {
+          margin: 12px 0;
+          color: #6c757d;
+          line-height: 1.5;
+
+          strong {
+            color: #495057;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .no-data {
+        color: #6c757d;
+        font-style: italic;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .info-text {
+        color: #6c757d;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    margin: 10px 0;
+
+    .analysis-card {
+      .arco-card-header {
+        padding: 12px 16px;
+
+        .arco-card-header-title {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .analysis-tabs {
+      .arco-tabs-nav {
+        padding: 0 16px;
+
+        .arco-tabs-nav-tab {
+          padding: 10px 16px;
+          font-size: 0.9rem;
+        }
+      }
+
+      .arco-tabs-content {
+        padding: 16px;
+      }
+    }
+
+    .ai-analysis-content {
+      .analysis-results {
+        .analysis-section {
+          padding: 12px;
+          margin-bottom: 16px;
+        }
+      }
+    }
+
+    .comparison-content {
+      .comparison-section {
+        padding: 16px;
+      }
+    }
+  }
+}
+

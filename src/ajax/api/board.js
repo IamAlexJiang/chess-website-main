@@ -1,7 +1,6 @@
 import request from "../request";
 
 /**
- * 获取boards
  * @returns {Promise<Object>}
  */
 const getBoards = () => {
@@ -9,7 +8,7 @@ const getBoards = () => {
 };
 
 /**
- * 上传board
+
  * @returns {Promise<Object>}
  */
 const postBoard = (name, value) => {
@@ -20,7 +19,6 @@ const postBoard = (name, value) => {
 };
 
 /**
- * 删除board
  * @returns {Promise<Object>}
  */
 const deleteBoard = (id) => {

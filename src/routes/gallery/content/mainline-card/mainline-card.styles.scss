@@ -13,6 +13,39 @@
       transform: scale(1.018);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+      position: relative;
+
+      .star-icon {
+        font-size: 1.5em;
+        color: #ccc;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: color 0.2s ease, transform 0.2s ease;
+        user-select: none;
+
+        &:hover {
+          color: #ffd700;
+          transform: scale(1.1);
+        }
+
+        &.favorite {
+          color: #ffd700;
+        }
+      }
+
+      .name {
+        font-weight: bold;
+        font-size: 1.2em;
+        flex: 1;
+        text-align: left;
+      }
+    }
   
     img {
       width: 100%;

@@ -26,8 +26,6 @@ const Endgame = () => {
     setSortBy(value.toLowerCase());
   };
 
-  console.log(endgameMap);
-
 
   return (
     <Fragment>

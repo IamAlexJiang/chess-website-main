@@ -64,7 +64,6 @@ export const addCollectionAndDocuments = async (
   });
 
   await batch.commit();
-  console.log("done");
 };
 
 export const getCategoriesAndDocuments = async () => {
@@ -124,12 +123,7 @@ export const createUserDocumentFromAuth = async (
   if (!userAuth) return;
 
   const userDocRef = doc(db, "users", userAuth.uid);
-
-  console.log(userDocRef);
-
   const userSnapshot = await getDoc(userDocRef);
-  console.log(userSnapshot);
-  console.log(userSnapshot.exists());
 
   if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
@@ -166,3 +160,50 @@ export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
+
+// Favorites functionality
+export const addToFavorites = async (userId, openingId) => {
+  if (!userId) return;
+  
+  const userDocRef = doc(db, "users", userId);
+  const userSnapshot = await getDoc(userDocRef);
+  
+  if (userSnapshot.exists()) {
+    const userData = userSnapshot.data();
+    const favorites = userData.favorites || [];
+    
+    if (!favorites.includes(openingId)) {
+      favorites.push(openingId);
+      await setDoc(userDocRef, { ...userData, favorites }, { merge: true });
+    }
+  }
+};
+
+export const removeFromFavorites = async (userId, openingId) => {
+  if (!userId) return;
+  
+  const userDocRef = doc(db, "users", userId);
+  const userSnapshot = await getDoc(userDocRef);
+  
+  if (userSnapshot.exists()) {
+    const userData = userSnapshot.data();
+    const favorites = userData.favorites || [];
+    
+    const updatedFavorites = favorites.filter(id => id !== openingId);
+    await setDoc(userDocRef, { ...userData, favorites: updatedFavorites }, { merge: true });
+  }
+};
+
+export const getUserFavorites = async (userId) => {
+  if (!userId) return [];
+  
+  const userDocRef = doc(db, "users", userId);
+  const userSnapshot = await getDoc(userDocRef);
+  
+  if (userSnapshot.exists()) {
+    const userData = userSnapshot.data();
+    return userData.favorites || [];
+  }
+  
+  return [];
+};
