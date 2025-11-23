@@ -37,10 +37,6 @@ const Home = () => {
           </section>
         ))}
       </main>
-
-      <footer className="home-footer">
-        <p>{content.footer}</p>
-      </footer>
     </div>
   );
 };

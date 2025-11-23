@@ -1,11 +1,11 @@
 import axios from "axios";
 
-// Use environment variable for API URL, fallback to localhost for development
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+// Use environment variable for API URL, fallback to 127.0.0.1 for development
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:3001';
 
 const service = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,
+  withCredentials: false, // Set to false to avoid CORS issues with wildcard origin
   timeout: 300000,
   headers: {
     "Content-Type": "application/json"
@@ -21,20 +21,28 @@ service.interceptors.response.use(
     console.log('API Response received:', {
       url: response.config.url,
       status: response.status,
-      data: data
+      data: data,
+      dataType: typeof data,
+      isArray: Array.isArray(data)
     });
     
     // Format 1: {code: 200, content: ...} (current server format)
     if (data && typeof data === 'object' && !Array.isArray(data)) {
+      // Handle success response with code 200
       if (data.code === 200) {
+        // For saveRecord: content is the ID string (e.g., "1763847756714")
+        // For getRecord: content is the array of records
+        console.log('Extracting content from code 200 response:', data.content);
         return data.content;
       }
       // Format 2: {success: true, data: ...}
       if (data.success && data.data) {
+        console.log('Using success.data format:', data.data);
         return data.data;
       }
-      // Format 3: Direct object with id (for saveRecord)
-      if (data.id) {
+      // Format 3: Direct object with id (for saveRecord - fallback)
+      if (data.id && !data.code) {
+        console.log('Using direct id format:', data.id);
         return data;
       }
       // Format 4: Error response

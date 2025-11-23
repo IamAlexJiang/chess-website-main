@@ -5,7 +5,7 @@ import axios from 'axios';
  */
 class MovePredictionService {
   constructor() {
-    this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+    this.baseURL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:3001';
   }
 
   /**
@@ -15,14 +15,26 @@ class MovePredictionService {
    */
   async predictMove(moves) {
     try {
+      console.log('🔵 MovePredictionService: Calling /chess/predict-move with moves:', moves);
+      console.log('🔵 MovePredictionService: Base URL:', this.baseURL);
+      
       const response = await axios.post(`${this.baseURL}/chess/predict-move`, {
         moves
       });
 
+      console.log('🔵 MovePredictionService: Response received:', response);
+      console.log('🔵 MovePredictionService: Response data:', response.data);
+      
       return response.data;
     } catch (error) {
-      console.error('Error predicting move:', error);
-      throw new Error('Failed to predict move');
+      console.error('❌ MovePredictionService: Error predicting move:', error);
+      console.error('❌ MovePredictionService: Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        statusText: error.response?.statusText
+      });
+      throw new Error(error.response?.data?.error || error.message || 'Failed to predict move');
     }
   }
 

@@ -12,7 +12,13 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+// CORS configuration - allow requests from localhost and 127.0.0.1
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: false, // Set to false to allow wildcard if needed
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Free Chess AI doesn't require an API key - it's completely free!

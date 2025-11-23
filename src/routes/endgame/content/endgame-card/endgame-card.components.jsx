@@ -4,6 +4,10 @@ import './endgame-card.styles.scss';
 const EndgameCard = ({ endgame }) => {
   const { name, description, cover } = endgame;
 
+  // Future Development: Cards will be clickable and navigate to EndgameBio
+  // Similar to how MainlineCard navigates to Bio for openings
+  // For now, cards remain non-clickable as this is a placeholder for future development
+
   return (
     <div className='endgame-card-container'>
       <span className='name'>{name}</span>

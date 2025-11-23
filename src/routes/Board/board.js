@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Record from "./record";
 import Manuals from "./manuals";
 import "./board.css";
@@ -26,13 +26,19 @@ const ChessGame = () => {
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   
-  // Move prediction state
+  const [savedSequence, setSavedSequence] = useState(null); 
+  const [savedSequencePosition, setSavedSequencePosition] = useState(0); 
+  const [isValidationMode, setIsValidationMode] = useState(false); 
+  
+
+  const validationSequenceRef = useRef(null);
+  
+
   const [predictedMove, setPredictedMove] = useState(null);
   const [predictedMoveSquares, setPredictedMoveSquares] = useState({});
   const [showPrediction, setShowPrediction] = useState(false);
   const [predictionEnabled, setPredictionEnabled] = useState(false);
-  
-  // Move prediction hook
+
   const { 
     isPredicting, 
     error: predictionError, 
@@ -142,6 +148,7 @@ const ChessGame = () => {
       }
       setGame(gameCopy);
       if (!isRecord) {
+        // Manual mode - existing logic
         const manual = manualId && manualList.find(v => String(v.id) === manualId)?.value
         if (manual) {
           if (moveFrom !== manual[step].from || square !== manual[step].to) {
@@ -172,11 +179,194 @@ const ChessGame = () => {
           }
         }
       } else {
-        record.push({
+        // Record mode - validation happens here when manual list toggle is OFF
+        // Check both state and ref for validation sequence (ref ensures immediate access, avoids React state timing issues)
+        const currentSequence = validationSequenceRef.current || savedSequence;
+        const shouldValidate = currentSequence && currentSequence.length > 0;
+        
+        console.log('🔍 Record mode check - isValidationMode:', isValidationMode, 'savedSequence:', savedSequence ? savedSequence.length : 'null', 'ref:', validationSequenceRef.current ? validationSequenceRef.current.length : 'null', 'shouldValidate:', shouldValidate);
+        
+        if (shouldValidate) {
+          // Validation mode: check if move matches saved sequence
+          // After saving, record contains all saved moves
+          // We want to validate that the NEXT move (at index record.length) matches savedSequence[record.length]
+          const sequence = validationSequenceRef.current || savedSequence;
+          console.log('Validation mode active. Record length:', record.length, 'Sequence length:', sequence.length);
+          
+          // Check if we have more moves in the saved sequence to validate against
+          if (record.length < sequence.length) {
+            // Still within saved sequence - validate the move against what was saved
+            const expectedMove = sequence[record.length];
+            const moveMatches = expectedMove && moveFrom === expectedMove.from && square === expectedMove.to;
+            console.log('Validating move #' + (record.length + 1) + '. Expected:', expectedMove, 'Got:', { from: moveFrom, to: square });
+            console.log('Move matches?', moveMatches, '- Comparing:', 'from:', moveFrom, '===', expectedMove?.from, ':', moveFrom === expectedMove?.from, 'to:', square, '===', expectedMove?.to, ':', square === expectedMove?.to);
+            
+            if (moveMatches) {
+              // Move matches saved sequence! Allow it
+              record.push({
+                from: moveFrom,
+                to: square
+              });
+              setRecord(record);
+              
+              // Check if we've completed the saved sequence
+              if (record.length >= sequence.length) {
+                setIsValidationMode(false);
+                setSavedSequence(null);
+                validationSequenceRef.current = null;
+                setSavedSequencePosition(0);
+                Message.success({ content: 'You completed the saved game sequence! Continue playing freely.', duration: 3000 });
+              }
+              
+              // Get AI analysis after the move is recorded
+              analyzeChessMoves();
+              
+              // Auto-update prediction if enabled
+              if (predictionEnabled) {
+                getMovePrediction();
+              }
+            } else {
+              // Move doesn't match saved sequence - reject it (undo)
+              console.log('🔴 ENTERING ELSE BRANCH - Move rejected!');
+              console.log('❌ WRONG MOVE! Expected:', JSON.stringify(expectedMove), 'but got:', JSON.stringify({ from: moveFrom, to: square }));
+              
+              // Show error message FIRST, immediately, before any state changes
+              console.log('📢 Calling Message.error BEFORE any state changes...');
+              Message.error({ 
+                content: 'That was the wrong move. Try again!', 
+                duration: 3000 
+              });
+              
+              // Use setTimeout to ensure message is displayed before undoing
+              setTimeout(() => {
+                // Undo the move after message is shown
+                setMoveSquares({});
+                setOptionSquares({});
+                setRightClickedSquares({});
+                gameCopy.undo();
+                setGame(gameCopy);
+                
+                setMoveFrom("");
+                setMoveTo(null);
+                setOptionSquares({});
+              }, 50);
+              
+              return;
+            }
+          } else {
+            // All saved moves are already played - allow any new moves (free play)
+            console.log('All saved moves completed - allowing free play');
+            
+            // Allow the move
+            record.push({
+              from: moveFrom,
+              to: square
+            });
+            setRecord(record);
+            
+            // Get AI analysis after the move is recorded
+            analyzeChessMoves();
+            
+            // Auto-update prediction if enabled
+            if (predictionEnabled) {
+              getMovePrediction();
+            }
+          }
+        } else {
+          // Normal record mode - continue as before
+          record.push({
+            from: moveFrom,
+            to: square
+          });
+          setRecord(record);
+          
+          // Get AI analysis after the move is recorded
+          analyzeChessMoves();
+          
+          // Auto-update prediction if enabled
+          if (predictionEnabled) {
+            getMovePrediction();
+          }
+        }
+      }
+      setMoveFrom("");
+      setMoveTo(null);
+      setOptionSquares({});
+      // Note: predictedMoveSquares are NOT cleared here - they persist until new prediction
+      return;
+    }
+  }
+
+  function onPromotionPieceSelect(piece) {
+    // if no piece passed then user has cancelled dialog, don't make move and reset
+    if (piece) {
+      const gameCopy = new Chess(game.fen());
+      const promotionPiece = piece[1].toLowerCase() ?? "q";
+      gameCopy.move({
+        from: moveFrom,
+        to: moveTo,
+        promotion: promotionPiece,
+      });
+      setGame(gameCopy);
+
+      // If in validation mode, check if promotion matches saved sequence
+      if (isRecord && isValidationMode && savedSequence) {
+        const expectedMove = savedSequence[savedSequencePosition];
+        if (expectedMove && moveFrom === expectedMove.from && moveTo === expectedMove.to) {
+          // Move matches! Allow it and advance position
+          const newRecord = [...record, {
+            from: moveFrom,
+            to: moveTo
+          }];
+          setRecord(newRecord);
+          setSavedSequencePosition(savedSequencePosition + 1);
+          
+          // Check if we've completed the saved sequence
+          if (savedSequencePosition + 1 >= savedSequence.length) {
+            setIsValidationMode(false);
+            setSavedSequence(null);
+            setSavedSequencePosition(0);
+            Message.success({ content: 'You completed the saved game sequence!', duration: 3000 });
+          }
+          
+          // Get AI analysis after the move is recorded
+          analyzeChessMoves();
+          
+          // Auto-update prediction if enabled
+          if (predictionEnabled) {
+            getMovePrediction();
+          }
+          } else {
+            // Move doesn't match saved sequence - reject it (undo)
+            // Show error message
+            Message.error({ 
+              content: 'That was the wrong move. Try again!', 
+              duration: 3000 
+            });
+            
+            // Undo the move
+            setTimeout(() => {
+              setMoveSquares({});
+              setOptionSquares({});
+              setRightClickedSquares({});
+              gameCopy.undo();
+              setGame(gameCopy);
+            }, 300);
+          }
+        setMoveFrom("");
+        setMoveTo(null);
+        setShowPromotionDialog(false);
+        setOptionSquares({});
+        return;
+      }
+
+      // If in normal record mode (not validation mode)
+      if (isRecord && !isValidationMode) {
+        const newRecord = [...record, {
           from: moveFrom,
-          to: square
-        });
-        setRecord(record);
+          to: moveTo
+        }];
+        setRecord(newRecord);
         
         // Get AI analysis after the move is recorded
         analyzeChessMoves();
@@ -186,23 +376,6 @@ const ChessGame = () => {
           getMovePrediction();
         }
       }
-      setMoveFrom("");
-      setMoveTo(null);
-      setOptionSquares({});
-      return;
-    }
-  }
-
-  function onPromotionPieceSelect(piece) {
-    // if no piece passed then user has cancelled dialog, don't make move and reset
-    if (piece) {
-      const gameCopy = new Chess(game.fen());
-      gameCopy.move({
-        from: moveFrom,
-        to: moveTo,
-        promotion: piece[1].toLowerCase() ?? "q",
-      });
-      setGame(gameCopy);
 
       // If in manual mode, handle manual-specific logic
       if (!isRecord && manualId) {
@@ -248,7 +421,7 @@ const ChessGame = () => {
 
 
 
-  function resetAll() {
+  function resetAll(validationData = null) {
     safeGameMutate((game) => {
       game.reset();
     });
@@ -262,6 +435,20 @@ const ChessGame = () => {
     setPredictedMoveSquares({});
     setShowPrediction(false);
     clearPrediction();
+    // Set validation mode if data provided, otherwise clear it
+    if (validationData && validationData.sequence && Array.isArray(validationData.sequence)) {
+      // Set both state and ref for immediate access
+      validationSequenceRef.current = validationData.sequence;
+      setSavedSequence(validationData.sequence);
+      setIsValidationMode(true);
+      setSavedSequencePosition(0);
+      console.log('✅ Validation set in resetAll - sequence length:', validationData.sequence.length);
+    } else {
+      validationSequenceRef.current = null;
+      setIsValidationMode(false);
+      setSavedSequence(null);
+      setSavedSequencePosition(0);
+    }
   }
   const init = async () => {
     try {
@@ -309,9 +496,17 @@ const ChessGame = () => {
       return; // Don't show warning, just return silently
     }
 
+    if (!predictionEnabled) {
+      return; // Don't fetch if prediction is disabled
+    }
+
     try {
+      console.log('🔍 Getting move prediction for record:', record);
       const result = await predictMove(record);
+      console.log('📥 Prediction result received:', result);
+      
       if (result && result.predictedMove) {
+        console.log('✅ Setting predicted move:', result.predictedMove);
         setPredictedMove(result.predictedMove);
         setShowPrediction(true);
         
@@ -326,15 +521,23 @@ const ChessGame = () => {
           borderRadius: "50%",
         };
         setPredictedMoveSquares(newSquares);
+        console.log('✅ Predicted move squares set:', newSquares);
+      } else {
+        console.warn('⚠️ Prediction result missing predictedMove:', result);
       }
     } catch (error) {
-      console.error("Error getting move prediction:", error);
+      console.error("❌ Error getting move prediction:", error);
       
       // Show error if prediction is manually enabled
       if (predictionEnabled) {
         if (error.message && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError'))) {
           Message.error({ 
             content: 'Server not running. Please start the server with: npm run server', 
+            duration: 4000 
+          });
+        } else {
+          Message.error({ 
+            content: 'Failed to get move prediction. Please check console for details.', 
             duration: 4000 
           });
         }
@@ -371,7 +574,7 @@ const ChessGame = () => {
     
     setIsLoadingAnalysis(true);
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:3001';
       const response = await fetch(`${API_URL}/chess/analyze`, {
         method: 'POST',
         headers: {
@@ -540,11 +743,29 @@ const ChessGame = () => {
               <Record 
                 list={record} 
                 onSave={(id, savedGame) => { 
-                  resetAll(); 
-                  setIsRecord(false); 
-                  setStep(0); 
-                  setManualList([...manualList, savedGame]); 
-                  setManualId(String(id)); 
+                  // After saving, enter validation mode
+                  // Reset board and start validation from the beginning
+                  // User will need to replay the saved moves, and validation will check each one
+                  setManualList(prevList => [...prevList, savedGame]); // Add to manual list
+                  
+                  // Save the sequence to validate against
+                  const sequenceToValidate = [...savedGame.value];
+                  
+                  // Reset the board and pass validation data directly
+                  // This ensures validation state is set atomically with the reset
+                  resetAll({ sequence: sequenceToValidate });
+                  
+                  // Verify validation state is set (resetAll already clears record)
+                  console.log('Validation mode enabled. Will validate against', sequenceToValidate.length, 'moves');
+                  console.log('After resetAll - calling setTimeout to verify state...');
+                  setTimeout(() => {
+                    console.log('State check - isValidationMode should be true now');
+                  }, 100);
+                  
+                  Message.info({ 
+                    content: `Game saved! Make your moves - they must match the saved sequence (${savedGame.value.length} moves).`, 
+                    duration: 4000 
+                  });
                 }} 
               />
             ) : (
@@ -611,6 +832,7 @@ const ChessGame = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

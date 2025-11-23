@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Message } from '@arco-design/web-react';
 
 import FormInput from '../../../components/form-input/form-input.component.jsx';
 import Button from '../../../components/button/button.component.jsx';
@@ -20,6 +22,7 @@ const defaultFormFields = {
 const SignUpForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { displayName, email, password, confirmPassword } = formFields;
+    const navigate = useNavigate();
 
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
@@ -29,12 +32,18 @@ const SignUpForm = () => {
         event.preventDefault();
 
         if(password !== confirmPassword) {
-            alert("Passwords do not match");
+            Message.error({
+                content: 'Passwords do not match. Please try again.',
+                duration: 4000
+            });
             return;
         }
 
         if(password.length < 6) {
-            alert("Password must be at least 6 characters long");
+            Message.error({
+                content: 'Password must be at least 6 characters long.',
+                duration: 4000
+            });
             return;
         }
 
@@ -46,14 +55,39 @@ const SignUpForm = () => {
 
             await createUserDocumentFromAuth(user, { displayName });
             resetFormFields();
+            
+            Message.success({
+                content: 'Signed up successfully! Redirecting to home page...',
+                duration: 3000
+            });
+            
+            // Navigate to home page after a brief delay to show success message
+            setTimeout(() => {
+                navigate('/');
+            }, 500);
         } catch(error) {
+            console.error('Sign up error:', error);
+            
             if(error.code === 'auth/email-already-in-use') {
-                alert('Cannot create user, email already in use');
+                Message.error({
+                    content: 'Cannot create user, email already in use.',
+                    duration: 4000
+                });
             } else if(error.code === 'auth/weak-password') {
-                alert('Password must be at least 6 characters long');
+                Message.error({
+                    content: 'Password must be at least 6 characters long.',
+                    duration: 4000
+                });
+            } else if(error.code === 'auth/invalid-email') {
+                Message.error({
+                    content: 'Email not valid. Please enter a valid email address.',
+                    duration: 4000
+                });
             } else {
-                console.log('user creation encountered an error', error);
-                alert('An error occurred during sign up. Please try again.');
+                Message.error({
+                    content: 'An error occurred during sign up. Please try again.',
+                    duration: 4000
+                });
             } 
         }
     };

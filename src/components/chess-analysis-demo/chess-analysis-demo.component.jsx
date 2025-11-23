@@ -50,7 +50,7 @@ const ChessAnalysisDemo = () => {
 
     setIsLoadingAnalysis(true);
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:3001';
       const response = await fetch(`${API_URL}/chess/analyze`, {
         method: 'POST',
         headers: {

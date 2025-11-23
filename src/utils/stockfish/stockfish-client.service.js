@@ -5,7 +5,7 @@ import axios from 'axios';
  */
 class StockfishClientService {
   constructor() {
-    this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+    this.baseURL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:3001';
   }
 
   /**
